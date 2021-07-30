@@ -1,0 +1,78 @@
+vault server -dev
+
+curl --header "X-Vault-Token: s.Ujc7QB8OoXrJo1pyx3svBUMP" htt   
+
+====
+vault server practice with production
+
+
+
+storage "file" {
+  address = "127.0.0.1:8500"
+  path    = "/root/vault-data"
+}
+
+listener "tcp" {
+  address     = "127.0.0.1:8200"
+  tls_disable = 1
+}
+
+
+vault server -config demo.hcl
+export VAULT_ADDR='http://127.0.0.1:8200'
+
+vault operator init
+
+{
+
+
+Unseal Key 1: EkBj3oIJ1nib9KjWmqMKSHVjsvvevtMEvVX4vjcHKQ3C
+Unseal Key 2: /ACQgL+w3ZU0gax8X2qGZkf5euCwj/o/dUbFKh1jCF/Q
+Unseal Key 3: LAUF5ZCSAQ0vAfn+9bfBo0qCBq2jnX5sXMyrcnjJfM6i
+Unseal Key 4: hQxl8kZE/Y3r/2TS43XRzAonT9bj3F2/LGju7ZTmtbXS
+Unseal Key 5: LpalqI8y0hvqC7rnDZvkx/On3TRtlMvL6LtUEiS2j2TB
+
+Initial Root Token: s.mrhku1UcaKm6DjFh3avvQc8b
+
+
+}
+
+Unseal now:
+
+vault operator unseal  , required to provide three unseral keys
+
+
+
+     1  vault status
+    2  export VAULT_ADDR='http://127.0.0.1:8200'
+    3  vault status
+    4  vault operator init
+    5  vault status
+    6  vault operator unseal
+    8  vault list auth/token/accessors
+
+vault auth enable approle
+====================
+
+
+
+enabling and disable secret engine by specifying a given path
+ vault secrets enable -path=secret kv
+ vault secrets disable secret
+
+
+working with secret
+
+vault kv put secret/first-secret user=userv1
+  535  vault kv put secret/first-secret user=userv2
+  536  vault kv put secret/first-secret user=userv3
+  537  vault status
+  538  vault kv get secret/first-secret
+  539  vault kv get -version=1 secret/first-secret
+  540  vault kv get -version=2 secret/first-secret
+  541  vault kv delete -version=2 secret/first-secret
+  542  vault kv delete -versions=2 secret/first-secret
+  543  vault kv undelete delete -versions=2 secret/first-secret
+  544  vault kv undelete -versions=2 secret/first-secret
+  545  vault kv destroy -versions=2 secret/first-secret
+  548  vault kv metadata delete secret/first-secret
